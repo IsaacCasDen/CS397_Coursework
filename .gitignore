@@ -1,4 +1,9 @@
-a.out
-output.txt
-*.o
-example
+codechallenge/2019-01-25/a.out
+codechallenge/2018-01-23/a.out
+codechallenge/2019-01-25/challenge1.o
+homework/hw01/example
+homework/hw01/example.o
+homework/hw02/.vstags
+homework/hw02/myCat
+homework/hw02/myCat.o
+homework/hw01/output.txt
