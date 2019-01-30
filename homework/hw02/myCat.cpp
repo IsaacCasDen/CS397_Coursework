@@ -22,6 +22,8 @@ int main(int argc, char **argv) {
             }
         }
     }
+
+    return result;
 }
 
 int printFile(char *fileName) {
