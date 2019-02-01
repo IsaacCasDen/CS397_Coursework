@@ -5,7 +5,7 @@
 #include <string>
 
 int * readFile(char *filename);
-void printResult(char * filename, int * values);
+void printResult(bool isTotal, char * filename, int * values);
 bool validateWord(char c, bool *hasPrev, bool *prevIsChar, bool *prevIsSpace, bool *isNewLine);
 
 int main(int argc, char **argv) {
@@ -13,14 +13,28 @@ int main(int argc, char **argv) {
     if (argc==1) {
 
     } else {
+        int filesRead=0;
+        int totalVals[4];
+        for (int i=0; i<4; i++) {
+            totalVals[i]=0;
+        }
+
         for (int i=1; i<argc; i++) {
             int * val = readFile(argv[i]);
             if (val!=NULL) {
-                printResult(argv[i],val);
+                filesRead++;
+                for (int i=0; i<4; i++) {
+                    totalVals[i]+=val[i];
+                }
+                printResult(false, argv[i], val);
             } else {
                 printf("Error reading file %s\n",argv[i]);
             }
-            //free(val);
+            free(val);
+        }
+
+        if (filesRead>1) {
+            printResult(true,NULL,totalVals);
         }
     }
     return 0;
@@ -72,9 +86,15 @@ int * readFile(char *filename) {
     }
 }
 
-void printResult(char * filename, int * values) {
-    printf("The file %s contains %d words", filename,values[0]);
-    printf(", %d characters",values[1]);
+void printResult(bool isTotal, char * filename, int * values) {
+    if (isTotal) {
+        printf("---------\nTotal results:");
+        
+    } else {
+        printf("The file %s contains: ",filename);
+    }
+    printf(" %d words", values[0]);
+    printf(" %d characters",values[1]);
     printf(", %d bytes",values[2]);
     printf(", %d line%c\n", values[3],(values[3]>1)?'s':' ');
 }
