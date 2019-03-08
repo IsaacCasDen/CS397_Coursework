@@ -10,9 +10,12 @@ int write_ver1();
 int read_ver1();
 
 int write();
-int writeStruct(FILE *file, struct filetest *inStruct);
 int read();
+int writeStruct(FILE *file, struct filetest *inStruct);
 int readStruct(FILE *file, struct filetest *outStruct);
+
+int writeStruct(FILE *file, struct filetest2 *inStruct);
+int readStruct(FILE *file, struct filetest2 *outStruct);
 
 const char *FILE_NAME = "test.bin";
 
@@ -20,6 +23,13 @@ struct filetest {
 
     int arraySize;
     int *array;
+
+};
+
+struct filetest2 {
+
+    int arraySize;
+    char *array;
 
 };
 
@@ -174,14 +184,14 @@ int write() {
     
     int testCount = 10;
 
-    struct filetest **s = (struct filetest **) malloc(testCount * sizeof(struct filetest));
+    struct filetest2 **s = (struct filetest2 **) malloc(testCount * sizeof(struct filetest2));
     
     for (int i=0; i<testCount; i++) {
-        s[i]=(struct filetest *)malloc(sizeof(struct filetest));
+        s[i]=(struct filetest2 *)malloc(sizeof(struct filetest2));
         s[i]->arraySize=(i+1)*2;
-        s[i]->array = (int *) malloc(s[i]->arraySize*sizeof(int));
+        s[i]->array = (char *) malloc(s[i]->arraySize*sizeof(int));
         for (int j = 0; j<s[i]->arraySize; j++) {
-            s[i]->array[j]=j+i;
+            s[i]->array[j]=j+i+60;
         }
     }
 
@@ -199,15 +209,13 @@ int write() {
 int read() {
     
     int size;
-    
-    
     FILE *file = fopen(FILE_NAME,"rb");
     printf("Read Start\n");
     fread(&size,sizeof(int),1,file);
     printf("%d structs\n",size);
-    struct filetest **s = (struct filetest **) malloc(size * sizeof(struct filetest));
+    struct filetest2 **s = (struct filetest2 **) malloc(size * sizeof(struct filetest2));
     for (int i=0; i<size; i++) {
-        s[i]=(struct filetest *) malloc(sizeof(struct filetest));
+        s[i]=(struct filetest2 *) malloc(sizeof(struct filetest2));
         readStruct(file,s[i]);
     }
     fclose(file);
@@ -220,7 +228,7 @@ int read() {
             if (j>0)
                 printf(", ");
                 
-            printf("%d",s[i]->array[j]);
+            printf("%c",s[i]->array[j]);
             
         }        
         printf("\n\n");
@@ -266,6 +274,28 @@ int readStruct(FILE *file, struct filetest *outStruct) {
     //fread(outStruct->array,sizeof(int),outStruct->arraySize,file);
 
     fread(outStruct,sizeof(struct filetest),1,file);
+
+    return 0;
+}
+
+int writeStruct(FILE *file, struct filetest2 *inStruct) {
+
+    //fwrite(&inStruct->arraySize,sizeof(int),1,file);
+    //fwrite(inStruct->array,sizeof(int),inStruct->arraySize,file);
+
+    fwrite(inStruct,sizeof(struct filetest2),1,file);
+    
+    return 0;
+}
+
+int readStruct(FILE *file, struct filetest2 *outStruct) {
+
+    //fread(&outStruct->arraySize,sizeof(int),1,file);
+
+    //outStruct->array=(int *) malloc(outStruct->arraySize*sizeof(int));
+    //fread(outStruct->array,sizeof(int),outStruct->arraySize,file);
+
+    fread(outStruct,sizeof(struct filetest2),1,file);
 
     return 0;
 }

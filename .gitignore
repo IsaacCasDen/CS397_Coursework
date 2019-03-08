@@ -1,4 +1,7 @@
-codechallenge/2019-01-25/a.out
+*.out
+*.o
+*.zip
+
 codechallenge/2018-01-23/a.out
 codechallenge/2019-01-25/challenge1.o
 homework/hw01/example
@@ -39,3 +42,9 @@ livecoding/activity-04/bin/myTee
 homework/hw05/text3.txt
 homework/hw05/text.txt
 homework/hw05/text2.txt
+codechallenge/2019-03-06/a.out
+homework/hw08/hw08
+homework/hw07/hw07
+codechallenge/2019-03-06/output.csv
+homework/hw07/text.txt
+homework/hw08/test.txt
