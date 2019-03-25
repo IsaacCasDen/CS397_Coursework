@@ -14,8 +14,8 @@ const int NODE_SIZE = sizeof(struct Node);
 
 void *mmalloc(size_t size);
 void mfree(void *ptr);
-size_t heapSize();
-size_t findOffset(void * ptr, int size);
+unsigned long heapSize();
+unsigned long findOffset(void * ptr, int size);
 struct Node * split(Node * node, size_t size);
 struct Node * consume(Node * node, size_t size);
 void printFreeList();
@@ -53,7 +53,7 @@ unsigned long getPosition(void * ptr) {
 unsigned long getRelPosition(void * ptr) {
     return (getPosition(ptr)-progStart);
 }
-size_t heapSize() {
+unsigned long heapSize() {
     return getPosition(sbrk(0))-progStart;
 }
 unsigned long findOffset(void * ptr, int size) {
@@ -61,8 +61,8 @@ unsigned long findOffset(void * ptr, int size) {
 }
 struct Node * consume(Node * node, size_t size) {
     if (node->size==size) {
-        printf("node at %d has enough space %d\n", getRelPosition(node), node->size);
-        printf("releasing %d (size=%d) from free list\n",getRelPosition(node),node->size);
+        printf("node at %lu has enough space %zu\n", getRelPosition(node), node->size);
+        printf("releasing %lu (size=%zu) from free list\n",getRelPosition(node),node->size);
         if (node==heapStart) {
             if (node->next!=NULL) {
                 heapStart=heapStart->next;
@@ -90,10 +90,10 @@ struct Node * split(Node * node, size_t size) {
     if (node->size<size) {
         _exit(1);
     } else if (node->size>size) {
-        printf("mmalloc: node at %d has enough space (%d)\n",getRelPosition(node),node->size);
+        printf("mmalloc: node at %lu has enough space (%zu)\n",getRelPosition(node),node->size);
         Node *freeNode = (struct Node *)findOffset(node,size+NODE_SIZE);
         freeNode->size=node->size-size-NODE_SIZE;
-        printf("splitting %d (%d) into %d (%d) and %d (%d)\n", 
+        printf("splitting %lu (%zu) into %lu (%zu) and %lu (%zu)\n", 
             getRelPosition(node), node->size,
             getRelPosition(node), size,
             getRelPosition(freeNode),freeNode->size);
@@ -182,7 +182,7 @@ void *mmalloc(size_t size) {
             }
         }
     }
-    printf("mmaloc: returning %d\n",getRelPosition(node));
+    printf("mmaloc: returning %lu\n",getRelPosition(node));
     return (void *)(getPosition(node)+NODE_SIZE);
 }
 void mfree(void *ptr) {
@@ -216,11 +216,11 @@ void printFreeList() {
         if (node->prev==NULL) prev=-1; else prev = getRelPosition(node->prev);
         if (node->next==NULL) next=-1; else next = getRelPosition(node->next);
 
-        printf("%d: (%d,%d,%d)\n",getRelPosition(node),prev,next,node->size);
+        printf("%lu: (%lu,%lu,%zu)\n",getRelPosition(node),prev,next,node->size);
         while ((node=node->next)!=NULL) {
             if (node->prev==NULL) prev=-1; else prev = getRelPosition(node->prev);
             if (node->next==NULL) next=-1; else next = getRelPosition(node->next);
-            printf("%d: (%d,%d,%d)\n",getRelPosition(node),prev,next,node->size);
+            printf("%lu: (%lu,%lu,%zu)\n",getRelPosition(node),prev,next,node->size);
         }
     }
     printf("=== END       ===\n");

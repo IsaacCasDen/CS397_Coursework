@@ -143,7 +143,7 @@ int writeStruct(FILE *file, struct filedata *inStruct) {
 int readStruct(FILE *file, struct filedata *outStruct) {
 
     //fread(outStruct,sizeof(struct filedata),1,file);
-    fread(&outStruct->fileNameSize,sizeof(size_t),1,file);e
+    fread(&outStruct->fileNameSize,sizeof(size_t),1,file);
     fread(&outStruct->fileName,sizeof(char),outStruct->fileNameSize,file);
     fread(&outStruct->fileStatSize,sizeof(size_t),1,file);
     fread(&outStruct->fileStat,sizeof(outStruct->fileStatSize),1,file);

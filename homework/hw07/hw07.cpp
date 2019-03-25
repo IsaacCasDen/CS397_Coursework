@@ -17,7 +17,7 @@ bool isLeapYear(int year);
 const int MIN_YEAR = 1583;
 
 int main(int argc, char **argv) {
-    struct tm datetime;
+    
 
     if (argc!=8) {
         printf("usage: %s filename month day year hour minute second\nexample: %s filename 01 23 2019 45 12 30\n",argv[0],argv[0]);
@@ -27,15 +27,14 @@ int main(int argc, char **argv) {
     if (file!=NULL) {
         fclose(file);
         
-        int hour = atoi(argv[4]); // There is a bug in atoi in that if struct tm isn't declared global mktime(&datetime) produces a datetime that is an hour early unless this assignment is called.
-        
-        // struct tm datetime;
+        struct tm datetime;
         datetime.tm_mon=atoi(argv[2])-1;
         datetime.tm_mday=atoi(argv[3]);
         datetime.tm_year=atoi(argv[4])-1900;
         datetime.tm_min=atoi(argv[6]);
         datetime.tm_hour=atoi(argv[5]);
         datetime.tm_sec=atoi(argv[7]);
+        datetime.tm_isdst=-1;
 
         if (!isValidDateTime(datetime))
             return 1;
