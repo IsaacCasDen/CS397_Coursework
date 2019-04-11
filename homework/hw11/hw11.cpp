@@ -146,6 +146,13 @@ void print(char c) {
     fflush(stdout);
 }
 
+void closePipes(int **pipes, int maxIndex) {
+    for (int i=0; i<=maxIndex; i++) {
+        close(pipes[i][0]);
+        close(pipes[i][1]);
+    }
+}
+
 void execute() {
 
     if (seqCount==1) {
@@ -158,39 +165,20 @@ void execute() {
     
     pipes = (int **) malloc(sizeof(int *) * seqCount);
     for (int seqId=0; seqId<seqCount; seqId++) {
-        int *p = (int *) malloc(sizeof(int)*2);
-        pipe(p);
-        pipes[seqId]=p;
         if (seqId==seqCount-1) {
             threadCount++;
             switch(fork()) {
                 case 0:
-                    dup2(pipes[seqId][0],0);
-                    close(pipes[seqId][1]);
-                    close(pipes[seqId-1][0]);
+                    dup2(pipes[seqId-1][0],0);
                     close(pipes[seqId-1][1]);
-                    // exit(execvp(sequence[seqId][0],sequence[seqId]));
+                    closePipes(pipes,seqId-1);
+                    exit(execvp(sequence[seqId][0],sequence[seqId]));
                     // exit(execlp("echo","echo","test",NULL));
-                    exit(execlp("wc","-l",NULL));
                     break;
                 default:
-                    for (int i=0; i<seqCount; i++) {
-                        // print('-');
-                        // print('\n');
-                        for (int j=0; j<2; j++) {
-                            // print(i);
-                            // print('\t');
-                            // print(j);
-                            // print('\t');
-
-                            // print(pipes[i][j]);
-                            close(pipes[i][j]);
-                            // print('\n');
-                        }
+                    closePipes(pipes,seqId-1);
+                    for (int i=0; i<seqCount-1; i++) {
                         free(pipes[i]);
-                        // print('-');
-                        // print('\n');
-                        // print('\n');
                     }
                     for (int i=0; i<threadCount; i++) {
                         wait(NULL);
@@ -198,10 +186,13 @@ void execute() {
                     continue;
             }
         } else if (seqId==0) {
+            int *p = (int *) malloc(sizeof(int)*2);
+            pipe(p);
+            pipes[seqId]=p;
             threadCount++;
             switch(fork()) {
                 case 0:
-                    // close(pipes[seqId][0]);
+                    close(pipes[seqId][0]);
                     dup2(pipes[seqId][1],1);
                     exit(execvp(sequence[seqId][0],sequence[seqId]));
                     break;
@@ -209,28 +200,27 @@ void execute() {
                     continue;
             }
         } else {
+            int *p = (int *) malloc(sizeof(int)*2);
+            pipe(p);
+            pipes[seqId]=p;
             threadCount++;
             switch(fork()) {
                 case 0:
-                    dup2(pipes[seqId-1][0],0);
-                    dup2(pipes[seqId-1][1],1);
-                    // close(pipes[seqId-1][1]);
-                    // close(pipes[seqId][0]);
                     if(seqId%2==1) {
-                        // dup2(pipes[seqId-1][0],0);
-                        // dup2(pipes[seqId][1],1);
-                        
-                        // close(pipes[seqId-1][1]);
-                        // close(pipes[seqId][0]);
+                        dup2(pipes[seqId-1][0],0);
+                        dup2(pipes[seqId][1],1);
+                        closePipes(pipes,seqId-2);
+                        close(pipes[seqId][0]);
+                        close(pipes[seqId-1][1]);
                     } else {
-                        // dup2(pipes[seqId-1][1],1);
-                        // dup2(pipes[seqId][0],0);
-
-                        // close(pipes[seqId][0]);
-                        // close(pipes[seqId-1][1]);
+                        dup2(pipes[seqId-1][0],0);
+                        dup2(pipes[seqId][1],1);
+                        closePipes(pipes,seqId-2);
+                        close(pipes[seqId-1][1]);
+                        close(pipes[seqId][0]);
                     }
-                    // exit(execvp(sequence[seqId][0],sequence[seqId]));
-                    exit(execlp("echo","echo","100",NULL));
+                    exit(execvp(sequence[seqId][0],sequence[seqId]));
+                    // exit(execlp("echo","echo","100",NULL));
                     break;
                 default:
                     continue;
