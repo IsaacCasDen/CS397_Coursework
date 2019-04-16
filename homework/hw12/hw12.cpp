@@ -48,11 +48,12 @@ int main(int argc, char **argv) {
     seedParam=atoi(argv[2]);
     threadCount=atoi(argv[3]);
     value = readWords(argv[1]);
-
     if (value==0) {
         value=createPassword();
         printf("Password: '%s'\n",password);
-        value = bruteForce();
+        if (value==0)
+            value = bruteForce();
+
     }
 
     printResults(value);
@@ -63,40 +64,38 @@ int main(int argc, char **argv) {
 int readWords(char *wordFilepath) {
     FILE *file = fopen(wordFilepath,"r");
     if (file==NULL) return -1;
-
     char word[1024];
     size_t len=0;
     ssize_t read;
     // while ((read=getline(&line,&len,file))!=-1) {
     //     wordCount++;
     // }
-    printf("Here\n");
     while (fscanf(file," %1023s",word)==1) {
         wordCount++;
     }
-    printf("Here\n");
     printf("Word count: %d\n",wordCount);
     words = (char **) malloc(sizeof(char *) * wordCount);
     fseek(file,0,SEEK_SET);
+
     int i=0;
     // while ((read=getline(&line,&len,file))!=-1) {
     while (fscanf(file," %1023s",word)==1) {
         len = strlen(word);
+        len++;
         if (len==0) {
             i++;
             continue;
         }
         int j=0;
-        char *_line = (char *) malloc(sizeof(char)*len);
+        char *_line = (char *) malloc(sizeof(char)*(len-1));
         _line[len]='\0';
-        for (j; j<len-1; j++) {
+        for (j; j<len; j++) {
             _line[j]=word[j];
             if (_line[j]=='\n') {
                 _line[j]='\0';
                 break;
             } 
         }
-        
         words[i] = (char *) malloc(sizeof(char)*j);
         for (int k=0;k<j;k++) words[i][k]=_line[k];
         free(_line);
