@@ -31,13 +31,13 @@ int main(int argc, char **argv) {
 
     if (argc != 3) {
         errorCode = printf("Usage: %s <i> <n>\n", argv[0]);
-        if (errorCode!=0) {
-            perror("Error:");
+        if (errorCode<0) {
+            perror("Error");
             return errorCode;
         }
         errorCode = printf("i\tNumber of iterations thate each thread will run the Monte Carlo simulation\nN\tNumber of threads\n");
-        if (errorCode!=0) {
-            perror("Error:");
+        if (errorCode<0) {
+            perror("Error");
             return errorCode;
         }
         return -1;
@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
     jobsRunning=jobCount;
     results = (Result *) malloc(sizeof(Result) * jobCount);
     if (results==NULL) {
-        perror("Error:");
+        perror("Error");
         return -1;
     }
     for (int i=0; i<jobCount; i++) {
@@ -69,7 +69,7 @@ void *displayThread(void *arg) {
     unsigned long long int hits, attempts;
     float complete;
     if (printf("Attempting to calculate Pi\n")<0) {
-        perror("Error:");
+        perror("Error");
         exit(errno);
     }
     sleep(1);
