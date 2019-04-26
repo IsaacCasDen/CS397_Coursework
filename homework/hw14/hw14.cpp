@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <string>
+#include <errno.h>
 
 char *CMD_START = strdup("start");
 char *CMD_STOP = strdup("stop");
@@ -85,14 +86,18 @@ bool processInput() {
 
     if (strcmp(buffer,CMD_START)==0) {
         for (int i=0; i<pidCount; i++) {
-            kill(pids[i],SIGUSR1);
-            buffer[0]='\0';
+            if (kill(pids[i],SIGUSR1)==-1) {
+                perror("Error");
+            }
+            
         }
     } else if (strcmp(buffer,CMD_STOP)==0) {
         for (int i=0; i<pidCount; i++) {
-            kill(pids[i],SIGUSR2);
-            value=false;
+            if (kill(pids[i],SIGUSR2)==-1) {
+                perror("Error");
+            }
         }
+        value=false;
     }
 
     return value;
@@ -131,7 +136,11 @@ void start(int sig) {
     while (true) {
         //printf("Process id %d executing against %s\n", getpid(),url);
         execute();
-        usleep(maxWaitInterval-1);
+        
+        if (usleep(maxWaitInterval-1)==-1) {
+            perror("Error");
+            exit(errno);
+        }
     }
 }
 void stop(int sig) {
@@ -147,8 +156,14 @@ void run(int index) {
     pids[index]=_id;
 
     char *id;
-    sprintf(buffer,"%d\n",_id);
-    fprintf(stderr, buffer);
+    if (sprintf(buffer,"%d\n",_id)<0) {
+        perror("Error");
+        exit(errno);
+    }
+    if (fprintf(stderr, buffer)<0) {
+        perror("Error");
+        exit(errno);
+    }
     
     while (true) sleep(1);
 }
