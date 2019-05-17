@@ -38,3 +38,8 @@ codechallenge/2019-03-27/text.txt
 homework/hw10/error.txt
 homework/hw10/input.txt
 homework/hw10/hw10
+*.png
+fixCommits.sh
+input_*.txt
+output_*.txt
+venv/

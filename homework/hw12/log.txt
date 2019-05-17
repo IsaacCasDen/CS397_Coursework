@@ -1,0 +1,12 @@
+Password: 'disprovesyelp'
+	Thread(0) started	1.start:0	end:7263	2.start:0	end:58110
+	Thread(1) started	1.start:7263	end:14527	2.start:0	end:58110
+	Thread(3) started	1.start:21791	end:29055	2.start:0	end:58110
+	Thread(2) started	1.start:14527	end:21791	2.start:0	end:58110
+	Thread(4) started	1.start:29055	end:36318	2.start:0	end:58110
+	Thread(5) started	1.start:36318	end:43582	2.start:0	end:58110
+	Thread(6) started	1.start:43582	end:50846	2.start:0	end:58110
+	Thread(7) started	1.start:50846	end:58110	2.start:0	end:58110
+
+8 threads were able to match password
+disprovesyelp with disprovesyelp over 63728647 operations
